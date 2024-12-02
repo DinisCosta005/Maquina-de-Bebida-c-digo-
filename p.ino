@@ -181,7 +181,7 @@ void loop() {
       Serial.println("Bebida3 em preparação");
       MixCocktail(0, 0, 5000); // Bebida1, Bebida2, Bebida3
     }
-
+/*
     // Bebida1 + Bebida2
     if (estado == 'd') {
       Serial.println("Bebida1+Bebida2 em preparação");
@@ -205,6 +205,7 @@ void loop() {
       Serial.println("Bebida1+Bebida2+Bebida3 em preparação");
       MixCocktail(2000, 2000, 2000); // Bebida1, Bebida2, Bebida3
     }
+    */
   }
 }
 
