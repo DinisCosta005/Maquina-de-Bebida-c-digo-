@@ -3,25 +3,21 @@ SoftwareSerial EEBlue(0,1); // RX | TX
 
 int Bebida1=2;
 int Bebida2=3;
-//int Bebida3=4;
-int Bebida4=5;
-
+int Bebida3=4;
 int estado=0;
-
 int TempoBombas=500;
+
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
   Serial.println("As portas do bluetooth estão abertas. \n Connecta-se ao HC-05 a partir de outro dispostivo bluetooth com a chave de emparelhamento, 1234");
   pinMode(2,OUTPUT);
   pinMode(3,OUTPUT);
-//  pinMode(4,OUTPUT);
-  pinMode(5,OUTPUT);
+  pinMode(4,OUTPUT);
 
   digitalWrite(2,HIGH);
   digitalWrite(3,HIGH);
-//  digitalWrite(4,HIGH);
-  digitalWrite(5,HIGH);
+  digitalWrite(4,HIGH);
 } 
 
 void loop() {
@@ -30,56 +26,38 @@ void loop() {
     estado=Serial.read();
     Serial.println(estado);
   }
-  // Bebidas:
 
+
+  // Bebidas
   // Bebida1
   if(estado=='a'){
     Serial.println("Bebida1 em preparação");
-    MixCocktail(5000,0,0,0); // Bebida1, Bebida2, Bebida3, Bebida4
+    MixCocktail(5000,0,0,0); // Bebida1, Bebida2, Bebida3
   }
-
-  
   // Bebida2
   if(estado=='b'){
     Serial.println("Bebida2 em preparação");
-    MixCocktail(0,5000,0,0); // Bebida1, Bebida2, Bebida3, Bebida4
+    MixCocktail(0,5000,0); // Bebida1, Bebida2, Bebida3
   }
-
-
-  // Bebida4
-  if(estado=='d'){
-    Serial.println("Bebida4 em preparação");
-    MixCocktail(0,0,0,5000); // Bebida1, Bebida2, Bebida3, Bebida4
+  // Bebida3
+  if(estado=='c'){
+    Serial.println("Bebida3 em preparação");
+    MixCocktail(0,0,5000); // Bebida1, Bebida2, Bebida3
   }
-
-
   // Bebida1+Bebida2
-  if(estado=='e'){
+  if(estado=='d'){
     Serial.println("Bebida1+Bebida2 em preparação");
-    MixCocktail(5000,3000,0,0); // Bebida1, Bebida2, Bebida3, Bebida4
+    MixCocktail(2500,2500,0); // Bebida1, Bebida2, Bebida3
   }
-
-
-  // Bebida1+Bebida4
-  if(estado=='f'){+
-    Serial.println("Bebida1+Bebida4 em preparação");
-    MixCocktail(5000,0,0,3000); // Bebida1, Bebida2, Bebida3, Bebida4
+  // Bebida2+Bebida3
+  if(estado=='e'){+
+    Serial.println("Bebida2+Bebida3 em preparação");
+    MixCocktail(0,2500,2500); // Bebida1, Bebida2, Bebida3
   }
-
-
-  // Bebida2+Bebida4
-  if(estado=='g'){
-    Serial.println("Bebida2+Bebida4 em preparação");
-    MixCocktail(0,5000,0,3000); // Bebida1, Bebida2, Bebida3, Bebida4
-  }
-
-
-  // Bebida1+Bebida2+Bebida4
-  if(estado=='h'){
-    Serial.println("Bebida1+Bebida2+Bebida4 em preparação");
-    MixCocktail(3000,3000,0,3000); // Bebida1, Bebida2, Bebida3, Bebida4
-  }
-
+  // Bebida1+Bebida3
+  if(estado=='f'){
+    Serial.println("Bebida1+Bebida3 em preparação");
+    MixCocktail(2500,0,2500); // Bebida1, Bebida2, Bebida3
 
 void  MixCocktail(int DelayTimeBebida1, int DelayTimeBebida2, int DelayTimeBebida3, int DelayTimeBebida4){
   estado=0;
@@ -106,3 +84,4 @@ void  MixCocktail(int DelayTimeBebida1, int DelayTimeBebida2, int DelayTimeBebid
   Serial.println("A bebida está pronta!");
   estado=0;
 }
+
