@@ -1,0 +1,113 @@
+#include <Wire.h>
+#include <LiquidCrystal.h>
+#include <SoftwareSerial.h>
+
+// Definir os pinos do LCD
+LiquidCrystal lcd(7, 6, 5, 4, 3, 2);  // Pinos do LCD
+
+SoftwareSerial BTserial(0, 1);  // Pinos do Bluetooth (RX, TX)
+
+// Definir pinos das bombas
+const int bomba1 = 8; // Bomba 1
+const int bomba2 = 9; // Bomba 2
+const int bomba3 = 10; // Bomba 3
+
+String comandoRecebido = "";
+
+void setup() {
+  // Inicializar o LCD e a comunicação serial
+  lcd.begin(16, 2);
+  BTserial.begin(9600);  // Bluetooth
+  Serial.begin(9600);    // Monitor serial
+  
+  // Configurar pinos das bombas como saída
+  pinMode(bomba1, OUTPUT);
+  pinMode(bomba2, OUTPUT);
+  pinMode(bomba3, OUTPUT);
+  
+  // Exibir mensagem inicial
+  lcd.setCursor(0, 0);
+  lcd.print("Escolha a bebida");
+  lcd.setCursor(0, 1);
+  lcd.print("Aguardando...");
+  
+  Serial.println("Sistema inicializado e aguardando comandos.");
+}
+
+void loop() {
+  // Verificar se há dados recebidos do Bluetooth
+  if (BTserial.available()) {
+    Serial.println("Dados recebidos do Bluetooth:");
+    comandoRecebido = BTserial.readString();
+    Serial.println(comandoRecebido);
+
+    // Processar o comando
+    if (comandoRecebido == "27") {
+      prepararBebida(1, 5000);  // Bebida 1
+    } 
+    else if (comandoRecebido == "28") {
+      prepararBebida(2, 5000);  // Bebida 2
+    }
+    else if (comandoRecebido == "29") {
+      prepararBebida(3, 5000);  // Bebida 3
+    }
+    else if (comandoRecebido == "30") {
+      prepararBebida(1, 2500);  // Metade do tempo para a combinação
+      prepararBebida(2, 2500);
+    } 
+    else if (comandoRecebido == "31") {
+      prepararBebida(2, 2500);
+      prepararBebida(3, 2500);
+    } 
+    else if (comandoRecebido == "32") {
+      prepararBebida(3, 2500);
+      prepararBebida(1, 2500);
+    } 
+    else {
+      Serial.println("Comando inválido!");
+    }
+  }
+}
+
+void prepararBebida(int bebida, int tempo) {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Preparando...");
+  
+  Serial.print("Preparando bebida ");
+  Serial.print(bebida);
+  Serial.print(" por ");
+  Serial.print(tempo);
+  Serial.println(" ms");
+  
+  // Acionar a bomba correspondente
+  if (bebida == 1) {
+    digitalWrite(bomba1, HIGH);
+    delay(tempo);
+    digitalWrite(bomba1, LOW);
+  } 
+  else if (bebida == 2) {
+    digitalWrite(bomba2, HIGH);
+    delay(tempo);
+    digitalWrite(bomba2, LOW);
+  } 
+  else if (bebida == 3) {
+    digitalWrite(bomba3, HIGH);
+    delay(tempo);
+    digitalWrite(bomba3, LOW);
+  }
+  
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Concluido!");
+  
+  Serial.println("Bebida pronta.");
+  
+  delay(3000);
+  
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Escolha a bebida");
+  lcd.setCursor(0, 1);
+  lcd.print("Aguardando...");
+}
