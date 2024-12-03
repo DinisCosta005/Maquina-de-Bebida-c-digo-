@@ -125,14 +125,23 @@ void loop() {
     Serial.println(estado);
 
     if (estado == 'a') {
-      Serial.println("Bebida1 em preparação.");
+      Serial.println("ÁGUA C/GÁS em preparação.");
       MixCocktail(5000, 0, 0);
     } else if (estado == 'b') {
-      Serial.println("Bebida2 em preparação.");
+      Serial.println("SUMO DE LARANJA em preparação.");
       MixCocktail(0, 5000, 0);
     } else if (estado == 'c') {
-      Serial.println("Bebida3 em preparação.");
+      Serial.println("CHÁ GELADO em preparação.");
       MixCocktail(0, 0, 5000);
+    } else if (estado == 'd') {
+      Serial.println("ÁGUA C/GÁS + SUMO DE LARANJA em preparação.");
+      MixCocktail(2500, 2500, 0);
+    } else if (estado == 'e') {
+      Serial.println("SUMO DE LARANJA + CHÁ GELADO em preparação.");
+      MixCocktail(0, 2500, 2500);
+    } else if (estado == 'f') {
+      Serial.println("CHÁ GELADO + ÁGUA C/GÁS em preparação.");
+      MixCocktail(2500, 0, 2500);
     }
   }
 }
