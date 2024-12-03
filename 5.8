@@ -1,0 +1,119 @@
+#include <Wire.h>
+#include <LiquidCrystal.h>
+#include <SoftwareSerial.h>
+
+// Definir os pinos do LCD
+LiquidCrystal lcd(7, 6, 5, 4, 3, 2);  // Pinos do LCD
+
+SoftwareSerial BTserial(11, 12);  // Pinos do Bluetooth (RX, TX)
+
+// Definir pinos das bombas
+const int bomba1 = 8;  // Bomba 1
+const int bomba2 = 9;  // Bomba 2
+const int bomba3 = 10; // Bomba 3
+
+String comandoRecebido = "";
+
+void setup() {
+  // Inicializar o LCD e a comunicação serial
+  lcd.begin(16, 2);
+  BTserial.begin(9600);  // Bluetooth
+  Serial.begin(9600);    // Monitor serial
+  
+  // Configurar pinos das bombas como saída
+  pinMode(bomba1, OUTPUT);
+  pinMode(bomba2, OUTPUT);
+  pinMode(bomba3, OUTPUT);
+  
+  // Exibir mensagem inicial
+  lcd.setCursor(0, 0);
+  lcd.print("Escolha a bebida");
+  lcd.setCursor(0, 1);
+  lcd.print("Aguardando...");
+  
+  Serial.println("Sistema inicializado e aguardando comandos.");
+}
+
+void loop() {
+  // Verificar se há dados recebidos do Bluetooth
+  if (BTserial.available()) {
+    comandoRecebido = BTserial.readString();  // Ler comando
+    comandoRecebido.trim();  // Remover espaços extras
+    
+    Serial.print("Comando recebido: ");
+    Serial.println(comandoRecebido);  // Debug no Serial Monitor
+    
+    // Processar o comando
+    if (comandoRecebido == "109") {
+      prepararIngrediente("Vodka");
+    } 
+    else if (comandoRecebido == "110") {
+      prepararIngrediente("Triple Sec");
+    } 
+    else if (comandoRecebido == "111") {
+      prepararIngrediente("Cranberry Juice");
+    } 
+    else if (comandoRecebido == "116") {
+      realizarLimpeza();
+    } 
+    else if (comandoRecebido == "117") {
+      prepararIngrediente("Água");
+    } 
+    else {
+      Serial.println("Comando inválido!");
+    }
+  }
+}
+
+void prepararIngrediente(String ingrediente) {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Preparando:");
+  lcd.setCursor(0, 1);
+  lcd.print(ingrediente);
+  
+  Serial.print("Preparando ingrediente: ");
+  Serial.println(ingrediente);
+  
+  // Simulação do tempo necessário para cada ingrediente (5 segundos)
+  delay(5000);
+  
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Concluido!");
+  
+  Serial.println("Ingrediente pronto.");
+  
+  delay(3000);
+  
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Escolha a bebida");
+  lcd.setCursor(0, 1);
+  lcd.print("Aguardando...");
+}
+
+void realizarLimpeza() {
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Limpando...");
+  
+  Serial.println("Limpando o sistema...");
+  
+  // Simulação do processo de limpeza (10 segundos)
+  delay(10000);
+  
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Limpeza concluida!");
+  
+  Serial.println("Limpeza concluída.");
+  
+  delay(3000);
+  
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Escolha a bebida");
+  lcd.setCursor(0, 1);
+  lcd.print("Aguardando...");
+}
