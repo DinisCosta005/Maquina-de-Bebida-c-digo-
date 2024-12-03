@@ -1,0 +1,171 @@
+#include <LiquidCrystal.h>
+#include <SoftwareSerial.h>
+
+// Configuração do LCD
+LiquidCrystal lcd(8, 6, 5, 4, 3, 2);
+
+// Definições de pinos dos sensores de moedas
+#define trigPin1 13  // Sensor para 0,50€
+#define echoPin1 12
+#define trigPin2 11  // Sensor para 1,00€
+#define echoPin2 10
+#define trigPin3 9   // Sensor para 2,00€
+#define entradaPin 7 // Sensor de entrada da moeda
+
+// Definições para as bombas de bebidas
+int Bebida1 = 2; // Bombeamento para bebida 1
+int Bebida2 = 3; // Bombeamento para bebida 2
+int Bebida3 = 4; // Bombeamento para bebida 3
+
+// Variáveis globais
+int estado = 0;
+int TempoBombas = 500;
+float total = 0.0;
+SoftwareSerial EEBlue(0, 1); // RX | TX (Bluetooth)
+
+// Caractere personalizado para o LCD
+byte Gota[] = {
+  B00100,
+  B01110,
+  B11111,
+  B11111,
+  B01110,
+  B00100,
+  B00010,
+  B00010
+};
+
+// Prototipagem das funções
+void MixCocktail(int DelayTimeBebida1, int DelayTimeBebida2, int DelayTimeBebida3);
+long measureDistance(int trigPin, int echoPin);
+
+void setup() {
+  // Inicialização do LCD
+  lcd.begin(16, 2);
+  lcd.createChar(0, Gota);
+  lcd.clear();
+
+  lcd.setCursor(3, 0);
+  lcd.print("Escolha a sua");
+  lcd.setCursor(3, 1);
+  lcd.write(byte(0));
+  lcd.print(" bebida ");
+  lcd.write(byte(0));
+
+  // Configuração de comunicação e sensores
+  Serial.begin(9600);
+  EEBlue.begin(9600); // Comunicação Bluetooth
+
+  pinMode(trigPin1, OUTPUT);
+  pinMode(echoPin1, INPUT);
+  pinMode(trigPin2, OUTPUT);
+  pinMode(echoPin2, INPUT);
+  pinMode(trigPin3, OUTPUT);
+  pinMode(echoPin3, INPUT);
+  pinMode(entradaPin, INPUT);
+
+  // Configuração das bombas
+  pinMode(Bebida1, OUTPUT);
+  pinMode(Bebida2, OUTPUT);
+  pinMode(Bebida3, OUTPUT);
+
+  digitalWrite(Bebida1, HIGH);
+  digitalWrite(Bebida2, HIGH);
+  digitalWrite(Bebida3, HIGH);
+
+  Serial.println("Conecte-se ao HC-05. Chave: 1234.");
+}
+
+void loop() {
+  // Verifica se há uma moeda detectada
+  if (digitalRead(entradaPin) == HIGH) {
+    Serial.println("Moeda detectada. Verificando valor...");
+    long distance1 = measureDistance(trigPin1, echoPin1);
+    long distance2 = measureDistance(trigPin2, echoPin2);
+    long distance3 = measureDistance(trigPin3, echoPin3);
+
+    if (distance1 > 0 && distance1 < 30) {
+      total += 1.0;
+      Serial.println("Moeda de 1€ detectada.");
+    } else if (distance2 > 0 && distance2 < 30) {
+      total += 0.5;
+      Serial.println("Moeda de 0,50€ detectada.");
+    } else if (distance3 > 0 && distance3 < 30) {
+      total += 2.0;
+      Serial.println("Moeda de 2€ detectada.");
+    }
+
+    lcd.setCursor(0, 0);
+    lcd.print("Total: ");
+    lcd.print(total, 1);
+    lcd.print("€");
+
+    if (total >= 2.0) {
+      lcd.setCursor(0, 1);
+      lcd.print("Entrega bebida!");
+      delay(5000);
+      total -= 2.0;
+    } else {
+      lcd.setCursor(0, 1);
+      lcd.print("Insira mais moedas");
+    }
+    delay(500);
+  } else {
+    lcd.setCursor(0, 0);
+    lcd.print("Aguardando moeda...");
+    lcd.setCursor(0, 1);
+    lcd.print("Total: ");
+    lcd.print(total, 1);
+    lcd.print("€   ");
+  }
+
+  // Controle via Bluetooth
+  if (EEBlue.available()) {
+    estado = EEBlue.read();
+    Serial.println(estado);
+
+    if (estado == 'a') {
+      Serial.println("Bebida1 em preparação.");
+      MixCocktail(5000, 0, 0);
+    } else if (estado == 'b') {
+      Serial.println("Bebida2 em preparação.");
+      MixCocktail(0, 5000, 0);
+    } else if (estado == 'c') {
+      Serial.println("Bebida3 em preparação.");
+      MixCocktail(0, 0, 5000);
+    }
+  }
+}
+
+void MixCocktail(int DelayTimeBebida1, int DelayTimeBebida2, int DelayTimeBebida3) {
+  estado = 0;
+  delay(800);
+
+  digitalWrite(Bebida1, LOW);
+  delay(DelayTimeBebida1);
+  digitalWrite(Bebida1, HIGH);
+  delay(TempoBombas);
+
+  digitalWrite(Bebida2, LOW);
+  delay(DelayTimeBebida2);
+  digitalWrite(Bebida2, HIGH);
+  delay(TempoBombas);
+
+  digitalWrite(Bebida3, LOW);
+  delay(DelayTimeBebida3);
+  digitalWrite(Bebida3, HIGH);
+  delay(TempoBombas);
+
+  Serial.println("A bebida está pronta!");
+}
+
+long measureDistance(int trigPin, int echoPin) {
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+
+  long duration = pulseIn(echoPin, HIGH);
+  return duration / 58;
+}
