@@ -1,0 +1,93 @@
+#include <Wire.h>
+#include <LiquidCrystal.h>
+#include <SoftwareSerial.h>
+
+// Definir os pinos do LCD
+LiquidCrystal lcd(7, 6, 5, 4, 3, 2);  // Pinos do LCD (pode variar)
+
+SoftwareSerial BTserial(11, 12);  // Definir pinos do Bluetooth (RX, TX)
+
+// Definir pinos das bombas
+const int bomba1 = 8; // Bomba 1
+const int bomba2 = 9; // Bomba 2
+const int bomba3 = 10; // Bomba 3
+
+String comandoRecebido = "";
+
+void setup() {
+  // Inicializar o LCD e a comunicação serial
+  lcd.begin(16, 2);
+  BTserial.begin(9600);  // Definir taxa de transmissão do Bluetooth
+  Serial.begin(9600);  // Monitor serial para depuração
+  
+  // Inicializar pinos das bombas como saída
+  pinMode(bomba1, OUTPUT);
+  pinMode(bomba2, OUTPUT);
+  pinMode(bomba3, OUTPUT);
+  
+  // Exibir mensagem inicial
+  lcd.setCursor(0, 0);
+  lcd.print("Escolha a bebida");
+  lcd.setCursor(0, 1);
+  lcd.print("Aguardando...");
+}
+
+void loop() {
+  // Verificar se há dados do Bluetooth
+  if (BTserial.available()) {
+    comandoRecebido = BTserial.readString();  // Receber comando via Bluetooth
+    Serial.println(comandoRecebido);  // Exibir no monitor serial para depuração
+    
+    // Processar o comando recebido
+    if (comandoRecebido == "bebida1") {
+      prepararBebida(1);
+    } 
+    else if (comandoRecebido == "bebida2") {
+      prepararBebida(2);
+    }
+    else if (comandoRecebido == "bebida3") {
+      prepararBebida(3);
+    }
+  }
+}
+
+void prepararBebida(int bebida) {
+  // Exibir "Em preparação" no LCD
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Preparando...");
+  
+  // Ligar a bomba correspondente
+  if (bebida == 1) {
+    digitalWrite(bomba1, HIGH);
+    delay(5000);  // Ajustar o tempo conforme necessário
+    digitalWrite(bomba1, LOW);
+  } 
+  else if (bebida == 2) {
+    digitalWrite(bomba2, HIGH);
+    delay(5000);  // Ajustar o tempo conforme necessário
+    digitalWrite(bomba2, LOW);
+  } 
+  else if (bebida == 3) {
+    digitalWrite(bomba3, HIGH);
+    delay(5000);  // Ajustar o tempo conforme necessário
+    digitalWrite(bomba3, LOW);
+  }
+  
+  // Exibir "Concluído" no LCD
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Concluído!");
+  
+  // Aguardar 3 segundos antes de reiniciar
+  delay(3000);
+  
+  // Voltar ao estado inicial
+  lcd.clear();
+  lcd.setCursor(0, 0);
+  lcd.print("Escolha a bebida");
+  lcd.setCursor(0, 1);
+  lcd.print("Aguardando...");
+}
+
+
