@@ -3,23 +3,34 @@
 #include <SoftwareSerial.h>
 
 // Configuração dos pinos
-#define rxPin 13  // RX do módulo Bluetooth
-#define txPin 12  // TX do módulo Bluetooth
+#define rxPin 13  // RX Bluetooth
+#define txPin 12  // TX Bluetooth
 
-LiquidCrystal lcd(7, 6, 5, 4, 3, 2); // Pinos do LCD
+LiquidCrystal lcd(7, 6, 5, 4, 3, 2); 
 const int bomba1 = 8;  // Pino da bomba 1
 const int bomba2 = 9; // Pino da bomba 2
 const int bomba3 = 10; // Pino da bomba 3
 
-SoftwareSerial BTserial(rxPin, txPin); // Comunicação Bluetooth (RX, TX)
-
+SoftwareSerial BTserial(rxPin, txPin);
 String comandoRecebido = "";
+byte Gota[] = {
+  B00100,  //  .   
+  B01110,  //  . .
+  B11111,  //  . . .
+  B11111,  //  . . .
+  B01110,  //  . . .
+  B00100,  //  . .
+  B00010,  //   .
+  B00010   //   .
+};
 
 void setup() {
   // Inicializar comunicação serial e LCD
   Serial.begin(9600);    // Serial Monitor
   BTserial.begin(9600);  // Bluetooth
   lcd.begin(16, 2);      // LCD 16x2
+      lcd.createChar(0, Gota);  // Cria o caractere copo
+      lcd.clear();
 
   // Configurar pinos das bombas como saída
   pinMode(bomba1, OUTPUT);
@@ -28,9 +39,13 @@ void setup() {
 
   // Exibir mensagem inicial no LCD
   lcd.setCursor(0, 0);
-  lcd.print("Escolha a bebida");
+  lcd.setCursor(8 - (strlen("Escolha a bebida") / 2), 0);   
+  lcd.print("Escolha a bebida");  // Primeira linha
   lcd.setCursor(0, 1);
-  lcd.print("Aguardando...");
+  lcd.setCursor(8 - (strlen("A aguardar...") / 2), 0);
+  lcd.write(byte(0));
+  lcd.print("A aguardar...");
+  lcd.write(byte(0));
 
   Serial.println("Sistema inicializado e aguardando comandos.");
 }
@@ -94,9 +109,9 @@ void loop() {
 void prepararBebida(int bebida, int tempo) {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("Preparando...");
+  lcd.print("A preparar...");
 
-  Serial.print("Preparando bebida ");
+  Serial.print("A preparar bebida ");
   Serial.print(bebida);
   Serial.print(" por ");
   Serial.print(tempo);
@@ -127,19 +142,22 @@ void prepararBebida(int bebida, int tempo) {
 
   delay(3000); // Esperar antes de reiniciar
 
-  lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("Escolha a bebida");
+  lcd.setCursor(8 - (strlen("Escolha a bebida") / 2), 0);   
+  lcd.print("Escolha a bebida");  // Primeira linha
   lcd.setCursor(0, 1);
-  lcd.print("Aguardando...");
+  lcd.setCursor(8 - (strlen("A aguardar...") / 2), 0);
+  lcd.write(byte(0));
+  lcd.print("A aguardar...");
+  lcd.write(byte(0));
 }
 
 void ligarTodasBombas(int tempo) {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("Ligando todas...");
+  lcd.print("A ligar todas...");
   
-  Serial.println("Ligando todas as bombas.");
+  Serial.println("A ligar todas as bombas.");
   
   digitalWrite(bomba1, HIGH);
   digitalWrite(bomba2, HIGH);
@@ -153,16 +171,16 @@ void ligarTodasBombas(int tempo) {
   lcd.setCursor(0, 0);
   lcd.print("Todas desligadas.");
   
-  Serial.println("Todas as bombas foram desligadas.");
+  Serial.println("Todas as bombas estão desligadas.");
 }
 
 void ligarBomba(int bomba, int tempo) {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("Ligando bomba ");
+  lcd.print("A ligar bomba ");
   lcd.print(bomba);
 
-  Serial.print("Ligando bomba ");
+  Serial.print("A ligar bomba ");
   Serial.print(bomba);
   Serial.print(" por ");
   Serial.print(tempo);
@@ -204,5 +222,5 @@ void cancelarTodasBombas() {
   lcd.setCursor(0, 0);
   lcd.print("Operacao cancelada.");
   
-  Serial.println("Todas as bombas desligadas.");
+  Serial.println("Todas as bombas estão desligadas.");
 }
