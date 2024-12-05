@@ -171,7 +171,7 @@ void ligarTodasBombas(int tempo) {
   lcd.setCursor(0, 0);
   lcd.print("Todas desligadas.");
   
-  Serial.println("Todas as bombas estão desligadas.");
+  Serial.println("Todas as bombas estao desligadas.");
 }
 
 void ligarBomba(int bomba, int tempo) {
@@ -222,5 +222,5 @@ void cancelarTodasBombas() {
   lcd.setCursor(0, 0);
   lcd.print("Operacao cancelada.");
   
-  Serial.println("Todas as bombas estão desligadas.");
+  Serial.println("Todas as bombas estao desligadas.");
 }
