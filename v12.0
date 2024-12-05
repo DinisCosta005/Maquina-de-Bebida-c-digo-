@@ -39,13 +39,12 @@ void setup() {
   pinMode(bomba3, OUTPUT);
 
   // Exibir mensagem inicial no LCD
-  lcd.clear();
-  lcd.setCursor(8 - (strlen("Escolha a bebida") / 2), 0);   
-  lcd.print("Escolha a bebida");  // Primeira linha centralizada
-  lcd.setCursor(8 - (strlen("A aguardar...") / 2), 1);
-  lcd.write(byte(0));  // Exibir o caractere personalizado
-  lcd.print("A aguardar...");
-  lcd.write(byte(0));  // Exibir novamente a gota
+  lcd.setCursor(0, 0);
+  lcd.print("Escolha a bebida");
+  lcd.setCursor(0, 1);
+  lcd.write(byte(0)); // Exibe a gota no display
+  lcd.print(" a aguardar ");
+  lcd.write(byte(0));
 
   Serial.println("Sistema inicializado e aguardando comandos.");
 }
@@ -139,12 +138,11 @@ void prepararBebida(int bebida, int tempo) {
   Serial.println("Bebida pronta.");
   delay(3000);
 
-  lcd.clear();
-  lcd.setCursor(8 - (strlen("Escolha a bebida") / 2), 0);   
+  lcd.setCursor(0, 0);
   lcd.print("Escolha a bebida");
-  lcd.setCursor(8 - (strlen("A aguardar...") / 2), 1);
-  lcd.write(byte(0));
-  lcd.print("A aguardar...");
+  lcd.setCursor(0, 1);
+  lcd.write(byte(0)); // Exibe a gota no display
+  lcd.print(" a aguardar ");
   lcd.write(byte(0));
 }
 
@@ -198,9 +196,9 @@ void ligarBomba(int bomba, int tempo) {
 
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("Bomba desligada.");
+  lcd.print("Concluido!");
   
-  Serial.println("Bomba desligada.");
+  Serial.println("Bebida pronta!");
 }
 
 void cancelarTodasBombas() {
@@ -208,7 +206,7 @@ void cancelarTodasBombas() {
   lcd.setCursor(0, 0);
   lcd.print("Cancelando...");
   
-  Serial.println("Cancelando todas as bombas.");
+  Serial.println("A cancelando todas as bombas.");
 
   digitalWrite(bomba1, LOW);
   digitalWrite(bomba2, LOW);
