@@ -49,34 +49,34 @@ void loop() {
       prepararBebida(1, 10000); // Bebida 1
     } 
     else if (comandoRecebido == "28") {
-      prepararBebida(2, 10000); // Bebida 2
+      prepararBebida(2, 20000); // Bebida 2
     } 
     else if (comandoRecebido == "29") {
-      prepararBebida(3, 10000); // Bebida 3
+      prepararBebida(3, 20000); // Bebida 3
     } 
     else if (comandoRecebido == "30") {
-      prepararBebida(1, 5000);  // Bebida 1 (metade)
-      prepararBebida(2, 5000);  // Bebida 2 (metade)
+      prepararBebida(1, 10000);  // Bebida 1 (metade)
+      prepararBebida(2, 10000);  // Bebida 2 (metade)
     } 
     else if (comandoRecebido == "31") {
-      prepararBebida(2, 5000);  // Bebida 2 (metade)
-      prepararBebida(3, 5000);  // Bebida 3 (metade)
+      prepararBebida(2, 10000);  // Bebida 2 (metade)
+      prepararBebida(3, 10000);  // Bebida 3 (metade)
     } 
     else if (comandoRecebido == "32") {
-      prepararBebida(3, 5000);  // Bebida 3 (metade)
-      prepararBebida(1, 5000);  // Bebida 1 (metade)
+      prepararBebida(3, 10000);  // Bebida 3 (metade)
+      prepararBebida(1, 10000);  // Bebida 1 (metade)
     }
     else if (comandoRecebido == "42") {
-      ligarTodasBombas(5000); // Ligar todas as bombas por 5 segundos
+      ligarTodasBombas(20000); // Ligar todas as bombas por 5 segundos
     }
     else if (comandoRecebido == "43") {
-      ligarBomba(1, 5000); // Ligar bomba 1 por 5 segundos
+      ligarBomba(1, 20000); // Ligar bomba 1 por 5 segundos
     }
     else if (comandoRecebido == "44") {
-      ligarBomba(2, 5000); // Ligar bomba 2 por 5 segundos
+      ligarBomba(2, 20000); // Ligar bomba 2 por 5 segundos
     }
     else if (comandoRecebido == "45") {
-      ligarBomba(3, 5000); // Ligar bomba 3 por 5 segundos
+      ligarBomba(3, 20000); // Ligar bomba 3 por 5 segundos
     }
     else if (comandoRecebido == "46") {
       cancelarTodasBombas(); // Cancelar funcionamento de todas as bombas
@@ -192,9 +192,9 @@ void ligarBomba(int bomba, int tempo) {
 void cancelarTodasBombas() {
   lcd.clear();
   lcd.setCursor(0, 0);
-  lcd.print("A cancelar...");
+  lcd.print("Cancelando...");
   
-  Serial.println("A CANCELAR TODAS as bombas.");
+  Serial.println("Cancelando todas as bombas.");
 
   digitalWrite(bomba1, LOW);
   digitalWrite(bomba2, LOW);
@@ -204,5 +204,5 @@ void cancelarTodasBombas() {
   lcd.setCursor(0, 0);
   lcd.print("Operacao cancelada.");
   
-  Serial.println("Todas as bombas DESLIGADAS.");
+  Serial.println("Todas as bombas desligadas.");
 }
